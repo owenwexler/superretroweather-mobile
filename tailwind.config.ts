@@ -8,7 +8,15 @@ export default {
   presets: [require("nativewind/preset")],
   theme: {
     extend: {
+      fontFamily: {
+        retro: ["PressStart2P_400Regular"],
+      },
       colors: {
+        // SuperRetroWeather brand colors (see AGENTS.md BRANDING AND DESIGN STYLE)
+        retro: {
+          bg: "#000000",
+          fg: "#FFFFFF",
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

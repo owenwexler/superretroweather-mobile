@@ -13,6 +13,7 @@ import { useColorScheme } from "@/lib/useColorScheme";
 import { getItem, setItem } from "@/lib/storage";
 import { useFrameworkReady } from "@/hooks/useFrameworkReady";
 import { Inter_400Regular, Inter_600SemiBold, useFonts } from '@expo-google-fonts/inter';
+import { PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
 import { useEffect } from "react";
 
 
@@ -22,7 +23,7 @@ export {
 } from "expo-router";
 
 export const unstable_settings = {
-  initialRouteName: "(tabs)",
+  initialRouteName: "index",
 };
 
 // Prevent the splash screen from auto-hiding before getting the color scheme.
@@ -34,6 +35,7 @@ export default function RootLayout() {
   const [loaded, error] = useFonts({
     Inter_400Regular,
     Inter_600SemiBold,
+    PressStart2P_400Regular,
   });
 
   useFrameworkReady();
@@ -66,13 +68,8 @@ export default function RootLayout() {
         <GestureHandlerRootView style={{ flex: 1 }}>
           <BottomSheetModalProvider>
             <Stack>
-              <Stack.Screen name="(tabs)" options={{ title: "Habits", headerShown: false }} />
-              <Stack.Screen options={{
-                headerShadowVisible: false,
-              }} name="habits/archive" />
-              <Stack.Screen options={{
-                headerShadowVisible: false,
-              }} name="habits/[id]" />
+              <Stack.Screen name="index" options={{ headerShown: false }} />
+              <Stack.Screen name="settings" options={{ title: "Settings", headerShadowVisible: false }} />
             </Stack>
           </BottomSheetModalProvider>
         </GestureHandlerRootView>

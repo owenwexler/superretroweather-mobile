@@ -1,13 +1,9 @@
 // This file is required for Expo/React Native SQLite migrations - https://orm.drizzle.team/quick-sqlite/expo
+// No migrations exist yet. Regenerate with `bun db:generate` once tables are added.
 
 import journal from "./meta/_journal.json";
-import m0000 from "./0000_cultured_lizard.sql";
-import m0001 from "./0001_absurd_blonde_phantom.sql";
 
 export default {
   journal,
-  migrations: {
-    m0000,
-    m0001,
-  },
+  migrations: {},
 };
