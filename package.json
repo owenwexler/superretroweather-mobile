@@ -12,7 +12,8 @@
     "build:web": "expo export --platform web",
     "format": "biome check --no-errors-on-unmatched --apply .",
     "db:generate": "bun drizzle-kit generate",
-    "expo-check": "bun expo install --check"
+    "expo-check": "bun expo install --check",
+    "lint": "expo lint"
   },
   "dependencies": {
     "@expo-google-fonts/inter": "^0.4.0",
@@ -35,6 +36,7 @@
     "@radix-ui/react-tooltip": "^1.1.6",
     "@react-navigation/native": "^7.0.14",
     "@shopify/flash-list": "2.0.2",
+    "@tanstack/react-query": "^5.105.0",
     "babel-plugin-inline-import": "^3.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -55,6 +57,7 @@
     "expo-system-ui": "~6.0.9",
     "expo-web-browser": "~15.0.11",
     "gh-pages": "^6.3.0",
+    "jotai": "^3.0.1",
     "lucide-react-native": "^0.514.0",
     "nativewind": "^4.1.23",
     "next-themes": "^0.4.6",
@@ -73,8 +76,7 @@
     "sql.js": "^1.13.0",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
-    "zod": "^4.6.6",
-    "zustand": "^4.5.6"
+    "zod": "^4.6.6"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
@@ -82,6 +84,8 @@
     "@types/react": "~19.1.10",
     "@types/sql.js": "^1.4.9",
     "drizzle-kit": "^0.31.1",
+    "eslint": "^9.0.0",
+    "eslint-config-expo": "~10.0.0",
     "tailwindcss": "3.4.1",
     "typescript": "~5.9.2"
   },

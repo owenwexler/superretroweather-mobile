@@ -5,8 +5,12 @@ import { useEffect, useReducer } from "react";
 
 
 export const initialize = async (): Promise<SQLJsDatabase> => {
+  // The wasm is self-hosted from public/ and must match the installed sql.js JS build.
+  // Loading it from the sql.js CDN pulls a different release and fails with
+  // "WebAssembly.instantiate(): Import ... function requires a callable".
+  // Refresh public/sql-wasm.wasm whenever the sql.js version changes.
   const sqlPromise = initSqlJs({
-    locateFile: (file) => `https://sql.js.org/dist/${file}`,
+    locateFile: (file) => `./${file}`,
   });
   const dataPromise = fetch("./database.sqlite").then((res) =>
     res.arrayBuffer(),

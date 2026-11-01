@@ -210,8 +210,12 @@ Use of an error logging and analytics service such as PostHog is reommended in a
 # BROWSER SUPPORT TARGETS
 We strive to support all the major browsers (Chromium, Firefox, and Webkit based).
 
+# SHOPIFY FLASHLIST
+Please use Shopify's FlashList component for any lists instead of the standard React Native ListView.
+
 # SECURITY
 Refer to SECURITY.md for best security practices
+
 # EXPO
 
 This is an Expo/React Native mobile application. Prioritize mobile-first patterns, performance, and cross-platform compatibility.

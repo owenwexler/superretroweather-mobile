@@ -14,7 +14,11 @@ import { getItem, setItem } from "@/lib/storage";
 import { useFrameworkReady } from "@/hooks/useFrameworkReady";
 import { Inter_400Regular, Inter_600SemiBold, useFonts } from '@expo-google-fonts/inter';
 import { PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect } from "react";
+
+// Server-level state (fetched data) is managed by React Query per AGENTS.md.
+const queryClient = new QueryClient();
 
 
 export {
@@ -62,6 +66,7 @@ export default function RootLayout() {
 
 
   return (
+    <QueryClientProvider client={queryClient}>
     <DatabaseProvider>
       <ThemeProvider value={colorScheme === "dark" ? DARK_THEME : LIGHT_THEME}>
         <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
@@ -76,5 +81,6 @@ export default function RootLayout() {
       </ThemeProvider>
       <PortalHost />
     </DatabaseProvider>
+    </QueryClientProvider>
   );
 }

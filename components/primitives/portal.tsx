@@ -1,45 +1,48 @@
 import * as React from "react";
 import { Platform, type View, type ViewStyle } from "react-native";
-import { create } from "zustand";
+import { atom, getDefaultStore, useAtomValue } from "jotai";
 
 const DEFAULT_PORTAL_HOST = "INTERNAL_PRIMITIVE_DEFAULT_HOST_NAME";
 
 type PortalMap = Map<string, React.ReactNode>;
 type PortalHostMap = Map<string, PortalMap>;
 
-const usePortal = create<{ map: PortalHostMap }>(() => ({
-  map: new Map<string, PortalMap>().set(
+// App-level portal state lives in a Jotai atom (see AGENTS.md STATE MANAGEMENT).
+const portalMapAtom = atom<PortalHostMap>(
+  new Map<string, PortalMap>().set(
     DEFAULT_PORTAL_HOST,
     new Map<string, React.ReactNode>(),
   ),
-}));
+);
 
 const updatePortal = (
   hostName: string,
   name: string,
   children: React.ReactNode,
 ) => {
-  usePortal.setState((prev) => {
-    const next = new Map(prev.map);
-    const portal = next.get(hostName) ?? new Map<string, React.ReactNode>();
-    portal.set(name, children);
-    next.set(hostName, portal);
-    return { map: next };
-  });
+  const store = getDefaultStore();
+  const prev = store.get(portalMapAtom);
+  const next = new Map(prev);
+  const portal = new Map(next.get(hostName) ?? new Map<string, React.ReactNode>());
+  portal.set(name, children);
+  next.set(hostName, portal);
+  store.set(portalMapAtom, next);
 };
+
 const removePortal = (hostName: string, name: string) => {
-  usePortal.setState((prev) => {
-    const next = new Map(prev.map);
-    const portal = next.get(hostName) ?? new Map<string, React.ReactNode>();
-    portal.delete(name);
-    next.set(hostName, portal);
-    return { map: next };
-  });
+  const store = getDefaultStore();
+  const prev = store.get(portalMapAtom);
+  const next = new Map(prev);
+  const portal = new Map(next.get(hostName) ?? new Map<string, React.ReactNode>());
+  portal.delete(name);
+  next.set(hostName, portal);
+  store.set(portalMapAtom, next);
 };
 
 export function PortalHost({ name = DEFAULT_PORTAL_HOST }: { name?: string }) {
+  const portalHostMap = useAtomValue(portalMapAtom);
   const portalMap =
-    usePortal((state) => state.map).get(name) ??
+    portalHostMap.get(name) ??
     new Map<string, React.ReactNode>();
   if (portalMap.size === 0) return null;
   return <>{Array.from(portalMap.values())}</>;
