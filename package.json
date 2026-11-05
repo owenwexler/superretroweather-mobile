@@ -2,7 +2,7 @@
   "name": "superretroweather-mobile",
   "main": "expo-router/entry",
   "version": "1.0.0",
-  "homepage": "https://expostarter.com",
+  "homepage": "https://superretroweather.onrender.com",
   "license": "Apache-2.0",
   "scripts": {
     "dev": "expo start",
