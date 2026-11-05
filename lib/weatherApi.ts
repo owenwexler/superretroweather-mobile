@@ -2,12 +2,30 @@ import { errors } from 'dataerror';
 import type { DataErrorReturnObject, ErrorType } from 'dataerror';
 
 import { env } from '@/lib/env';
+import { getMockWeatherResponse } from '@/lib/mockWeatherApi';
 import { snaxios } from '@/lib/snaxios';
 
 import type { IVCWeatherResponse } from '@/typedefs/IVCWeatherResponse';
 
 // The web app's /api/weather route holds the VisualCrossing key, caches responses in Redis, rate limits by IP, and validates the location.
 const WEATHER_ENDPOINT = `${env.EXPO_PUBLIC_BASE_API_URL.replace(/\/+$/, '')}/api/weather`;
+
+// __DEV__ keeps offline mode out of release builds, even if the variable is set by mistake
+export const isOfflineMode = __DEV__ && env.EXPO_PUBLIC_DEV_MODE === 'offline';
+
+if (isOfflineMode) {
+  console.log('SuperRetroWeather is in offline mode: weather comes from the fixtures in offlineWeatherData/');
+}
+
+const getWeatherResponse = (location: string) => {
+  return isOfflineMode
+    ?
+      getMockWeatherResponse(location)
+    :
+      snaxios.get<DataErrorReturnObject<IVCWeatherResponse>>(WEATHER_ENDPOINT, {
+        params: { location }
+      });
+};
 
 export const LOCATION_NOT_FOUND = 'location_not_found';
 
@@ -34,9 +52,7 @@ export const isNonRetryableWeatherError = (error: unknown): boolean => {
 // Unwraps the /api/weather body ({ data, error }) so components get the weather data directly.
 // Failures are thrown, not returned, because React Query only sets isError when queryFn throws.
 export const fetchWeather = async (location: string): Promise<IVCWeatherResponse> => {
-  const response = await snaxios.get<DataErrorReturnObject<IVCWeatherResponse>>(WEATHER_ENDPOINT, {
-    params: { location }
-  });
+  const response = await getWeatherResponse(location);
 
   if (response.error) {
     throw response.error;

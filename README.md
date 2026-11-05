@@ -53,8 +53,21 @@ Expo inlines any variable prefixed with `EXPO_PUBLIC_` into the client bundle, s
 | --- | --- | --- |
 | `EXPO_PUBLIC_BASE_API_URL` | Yes | Base URL of the SuperRetroWeather web app, which serves `/api/weather?location=...` (e.g. `http://localhost:3000` in development). Validated with T3-Env in `lib/env.ts`; the app will not start without a valid URL. On the Android emulator use `http://10.0.2.2:3000`, and on a physical device use your computer's LAN IP. |
 | `EXPO_PUBLIC_WEATHER_IMAGE_BASE_URL` | No | Base URL for the 8-bit weather images. Defaults to `/images/weather`. |
+| `EXPO_PUBLIC_DEV_MODE` | No | `online` (default) calls the web app. `offline` serves saved fixtures from a mock API on the device, with no server or network needed (see [Offline Mode](#offline-mode)). |
 
 Restart the dev server after changing `.env`, because Expo reads these values when it starts.
+
+## Offline Mode
+Set `EXPO_PUBLIC_DEV_MODE='offline'` to develop and test without the web app, a network connection, or a VisualCrossing key. This is handy for testing on physical phones. Offline mode only works in development builds; release builds always call the web app.
+
+Weather comes from real VisualCrossing responses saved on October 31, 2023 (`offlineWeatherData/`). The mock API in `lib/mockWeatherApi.ts` returns the same response shape as `/api/weather`, after a short delay so the loading state shows.
+
+| Type this location | You get |
+| --- | --- |
+| `Dallas, TX`, `Washington, DC`, `Denver, CO`, `Los Angeles, CA`, `Malaga, Spain`, `Nashville, TN`, `Orlando, FL`, `Toronto, Canada`, `Virginia Beach, VA` | That city's weather. Case and spacing don't matter, and the city name alone works too (e.g. `dallas`). |
+| `error` | The error screen (HTTP 500) |
+| `rate limited` | The rate limit error (HTTP 429) |
+| Anything else | The not found screen |
 
 ## Accessing the VisualCrossing Weather API
 - SuperRetroWeather uses [VisualCrossing's Weather Data Services](https://www.visualcrossing.com/weather/weather-data-services#/login) to retrieve all weather data.

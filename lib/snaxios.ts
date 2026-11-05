@@ -21,7 +21,7 @@ export type SnaxiosArgs = {
   nextRevalidateTime?: number;
 }
 
-interface SnaxiosReturnObject<T> extends DataErrorReturnObject<T> {
+export interface SnaxiosReturnObject<T> extends DataErrorReturnObject<T> {
   status: number;
 }
 
