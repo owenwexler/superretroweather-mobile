@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import type { FC } from 'react';
 import { Text, View } from 'react-native';
-import { FlashList } from '@shopify/flash-list';
 import { useAtom } from 'jotai';
 import { clickableText } from "../style/twClasses/clickableTextClasses";
 import ClientNavbarSeparator from "./ClientNavbarSeparator";
@@ -13,6 +12,8 @@ const getLocationId = (location: string) => {
   return location.split(' ').join('-').replace(',', '').toLowerCase();
 };
 
+// Exception to the FlashList rule in AGENTS.md: there are never more than MAX_SAVED_LOCATIONS (5) entries, so a plain mapped row is enough.
+// A horizontal FlashList positions each item absolutely, with no width, inside a container sized from estimated item widths.  That squeezed every location onto two lines regardless of text size or screen width.
 const SavedLocations: FC = () => {
   const [savedLocations, setSavedLocations] = useAtom(savedLocationsAtom);
   const [, setCurrentLocation] = useAtom(currentLocationAtom);
@@ -26,34 +27,35 @@ const SavedLocations: FC = () => {
     setSavedLocations(savedLocationData);
   }, [setSavedLocations]);
 
-  // Web used justify-center / justify-between on a wrapping row; FlashList is a horizontal scroller here, so the same spacing is applied to its content container.
-  const justifyContent = savedLocations.length === 1 ? 'center' : 'space-between';
+  const justifyClass =
+    savedLocations.length === 1
+    ?
+      'justify-center'
+    :
+      'justify-between';
 
   if (savedLocations.length === 0) {
     return null;
   }
 
+  // Same layout as the web app: one row on large screens, stacked and centered below the lg breakpoint
   return (
     <>
       <ClientNavbarSeparator />
-      <View testID="srw-saved-locations-section" className="py-3 pl-3 pr-4 max-md:pl-1 max-md:pr-1">
-        <FlashList
-          data={savedLocations}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ flexGrow: 1, justifyContent }}
-          keyExtractor={(location) => `saved-location-${getLocationId(location)}`}
-          renderItem={({ item: location }) => (
+      <View testID="srw-saved-locations-section" className={`flex-row max-lg:flex-col ${justifyClass} max-sm:justify-center items-center max-lg:gap-2 pl-3 pr-4 max-md:pl-1 max-md:pr-1 py-3`}>
+        {
+          savedLocations.map((location) => (
             <Text
+              key={`saved-location-${getLocationId(location)}`}
               testID={`saved-location-${getLocationId(location)}`}
               accessibilityRole="button"
-              className={`font-retro mx-3 ${clickableText}`}
+              className={`font-retro ${clickableText}`}
               onPress={() => handleLocationLinkClick(location)}
             >
               {location}
             </Text>
-          )}
-        />
+          ))
+        }
       </View>
     </>
   );

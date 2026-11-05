@@ -52,7 +52,6 @@ Expo inlines any variable prefixed with `EXPO_PUBLIC_` into the client bundle, s
 | Variable | Required | Purpose |
 | --- | --- | --- |
 | `EXPO_PUBLIC_BASE_API_URL` | Yes | Base URL of the SuperRetroWeather web app, which serves `/api/weather?location=...` (e.g. `http://localhost:3000` in development). Validated with T3-Env in `lib/env.ts`; the app will not start without a valid URL. On the Android emulator use `http://10.0.2.2:3000`, and on a physical device use your computer's LAN IP. |
-| `EXPO_PUBLIC_WEATHER_IMAGE_BASE_URL` | No | Base URL for the 8-bit weather images. Defaults to `/images/weather`. |
 | `EXPO_PUBLIC_DEV_MODE` | No | `online` (default) calls the web app. `offline` serves saved fixtures from a mock API on the device, with no server or network needed (see [Offline Mode](#offline-mode)). |
 
 Restart the dev server after changing `.env`, because Expo reads these values when it starts.

@@ -213,6 +213,9 @@ We strive to support all the major browsers (Chromium, Firefox, and Webkit based
 # SHOPIFY FLASHLIST
 Please use Shopify's FlashList component for any lists instead of the standard React Native ListView.
 
+Exception: short lists with a small fixed maximum length don't need FlashList, and may map over a plain View instead.  Mark each exception with a code comment explaining why.  Current exceptions:
+- Saved locations (`components/Navbar/SavedLocations.tsx`): never more than 5 entries (`MAX_SAVED_LOCATIONS`).  A horizontal FlashList also squeezed each location onto two lines, because it positions items absolutely inside a container sized from estimated widths.
+
 # SECURITY
 Refer to SECURITY.md for best security practices
 

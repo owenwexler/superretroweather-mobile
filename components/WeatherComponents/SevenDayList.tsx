@@ -12,7 +12,10 @@ interface SevenDayListProps {
 const SevenDayList: FC<SevenDayListProps> = ({ sevenDayList, location }) => {
   return (
     <View className="flex-col mt-9 w-full">
-      <Text testID="seven-day-header" accessibilityRole="header" className="font-retro text-2xl mt-9 mb-2 text-white">SEVEN-DAY FORECAST</Text>
+      {/* In React Native, text-center has to be on the Text itself.  Text styles are not inherited from a parent View like they are from a div on the web. */}
+      <View className="items-center justify-center">
+        <Text testID="seven-day-header" accessibilityRole="header" className="font-retro text-center text-2xl max-sm:text-lg mt-9 mb-2 text-white">SEVEN-DAY FORECAST</Text>
+      </View>
       <FlashList
         data={sevenDayList}
         // The page itself scrolls (HomePage ScrollView), so this list does not scroll independently.
