@@ -17,7 +17,7 @@ SuperRetroWeather is a single codebase that runs as a native iOS and Android app
 * Animation and gestures: [React Native Reanimated](https://docs.swmansion.com/react-native-reanimated/), [React Native Gesture Handler](https://docs.swmansion.com/react-native-gesture-handler/)
 * Lists and sheets: [FlashList](https://shopify.github.io/flash-list/) and [@gorhom/bottom-sheet](https://gorhom.dev/react-native-bottom-sheet/)
 * Client state management: [Jotai](https://jotai.org/)
-* Server state and data fetching: [TanStack Query](https://tanstack.com/query) (installed), plain `fetch` for the weather endpoint
+* Server state and data fetching: [TanStack Query](https://tanstack.com/query) (installed), [Snaxios](lib/snaxios.ts) for the weather endpoint, with the query cache saved to MMKV
 * Local persistence: [react-native-MMKV](https://github.com/mrousavy/react-native-mmkv) for saved locations
 * Database: [expo-sqlite](https://docs.expo.dev/versions/latest/sdk/sqlite/) with [Drizzle ORM](https://orm.drizzle.team/) (`db/`); the schema is currently empty. On web, Drizzle uses [sql.js](https://sql.js.org/) instead (`db/drizzle.web.ts`)
 * Forms and validation: [React Hook Form](https://react-hook-form.com/) with [Zod](https://zod.dev/)
@@ -51,7 +51,7 @@ Expo inlines any variable prefixed with `EXPO_PUBLIC_` into the client bundle, s
 
 | Variable | Required | Purpose |
 | --- | --- | --- |
-| `EXPO_PUBLIC_API_BASE_URL` | Yes, for live weather | Base URL of the backend that exposes the `/weather?location=...` endpoint. The client calls `${EXPO_PUBLIC_API_BASE_URL}/weather`. The endpoint path is still a placeholder. |
+| `EXPO_PUBLIC_BASE_API_URL` | Yes | Base URL of the SuperRetroWeather web app, which serves `/api/weather?location=...` (e.g. `http://localhost:3000` in development). Validated with T3-Env in `lib/env.ts`; the app will not start without a valid URL. On the Android emulator use `http://10.0.2.2:3000`, and on a physical device use your computer's LAN IP. |
 | `EXPO_PUBLIC_WEATHER_IMAGE_BASE_URL` | No | Base URL for the 8-bit weather images. Defaults to `/images/weather`. |
 
 Restart the dev server after changing `.env`, because Expo reads these values when it starts.

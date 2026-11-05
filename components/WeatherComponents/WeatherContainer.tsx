@@ -1,47 +1,45 @@
 import type { FC } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import Loading from '../Loading';
 import Error from '../Error';
+import NotFound from '../NotFound';
 import CurrentConditions from './CurrentConditions';
 import WeatherHeader from './WeatherHeader';
 import SevenDayList from './SevenDayList';
 
-import { getWeatherData } from '@/lib/weatherApi';
-import type { IVCWeatherResponse } from '@/typedefs/IVCWeatherResponse';
+import { useWeather } from '@/hooks/useWeather';
+import { hasErrorCode, LOCATION_NOT_FOUND } from '@/lib/weatherApi';
 
 interface WeatherContainerProps {
   location: string;
 }
 
 const WeatherContainer: FC<WeatherContainerProps> = ({ location }) => {
-  const { data, isLoading, error, isError } = useQuery({
-    queryKey: ['srw', location],
-    queryFn: () => getWeatherData({ location }),
-    staleTime: 1000 * 60 * 5,
-    gcTime: 1000 * 60 * 5
-  });
+  const { data, isPending, error } = useWeather(location);
 
-
-  if (isLoading) {
+  if (isPending) {
     return <Loading />;
   }
 
-  if (isError) {
+  // Only show an error when there is nothing to display.  If a background refetch fails (e.g. offline), keep showing the cached weather.
+  if (!data) {
     console.error(error);
+
+    if (hasErrorCode(error, LOCATION_NOT_FOUND)) {
+      return <NotFound />;
+    }
+
     return <Error />;
   }
 
-  const weather = data! as IVCWeatherResponse;
-
   return (
     <>
-      <WeatherHeader name={weather.location.name} />
+      <WeatherHeader name={data.location.name} />
 
-      <CurrentConditions conditions={weather.location.currentConditions} />
+      <CurrentConditions conditions={data.location.currentConditions} />
 
       <SevenDayList
-        sevenDayList={weather.location.values}
-        location={weather.location.name}
+        sevenDayList={data.location.values}
+        location={data.location.name}
       />
     </>
   );

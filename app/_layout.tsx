@@ -14,11 +14,16 @@ import { getItem, setItem } from "@/lib/storage";
 import { useFrameworkReady } from "@/hooks/useFrameworkReady";
 import { Inter_400Regular, Inter_600SemiBold, useFonts } from '@expo-google-fonts/inter';
 import { PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { useEffect } from "react";
+import { PERSISTED_CACHE_BUSTER, PERSISTED_CACHE_MAX_AGE, queryClient, queryPersister } from "@/lib/queryClient";
 
-// Server-level state (fetched data) is managed by React Query per AGENTS.md.
-const queryClient = new QueryClient();
+// Server-level state (fetched data) is managed by React Query per AGENTS.md, and saved to MMKV so it survives restarts and works offline.
+const persistOptions = {
+  persister: queryPersister,
+  maxAge: PERSISTED_CACHE_MAX_AGE,
+  buster: PERSISTED_CACHE_BUSTER
+};
 
 
 export {
@@ -66,7 +71,7 @@ export default function RootLayout() {
 
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <PersistQueryClientProvider client={queryClient} persistOptions={persistOptions}>
     <DatabaseProvider>
       <ThemeProvider value={colorScheme === "dark" ? DARK_THEME : LIGHT_THEME}>
         <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
@@ -81,6 +86,6 @@ export default function RootLayout() {
       </ThemeProvider>
       <PortalHost />
     </DatabaseProvider>
-    </QueryClientProvider>
+    </PersistQueryClientProvider>
   );
 }

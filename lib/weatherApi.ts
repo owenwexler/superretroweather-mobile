@@ -1,18 +1,62 @@
+import { errors } from 'dataerror';
+import type { DataErrorReturnObject, ErrorType } from 'dataerror';
+
+import { env } from '@/lib/env';
+import { snaxios } from '@/lib/snaxios';
+
 import type { IVCWeatherResponse } from '@/typedefs/IVCWeatherResponse';
 
-// The TanStack Start server function (server/server.ts → getWeatherData) cannot be imported on-device.
-// This client wrapper keeps the same call shape and calls a plain HTTP endpoint instead.
-// The endpoint path `/weather` is a placeholder and must match the backend once it is exposed.
-const WEATHER_API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL ?? '';
+// The web app's /api/weather route holds the VisualCrossing key, caches responses in Redis, rate limits by IP, and validates the location.
+const WEATHER_ENDPOINT = `${env.EXPO_PUBLIC_BASE_API_URL.replace(/\/+$/, '')}/api/weather`;
 
-export const getWeatherData = async ({ location }: { location: string }): Promise<IVCWeatherResponse | { error: string }> => {
-  const response = await fetch(
-    `${WEATHER_API_BASE_URL}/weather?location=${encodeURIComponent(location)}`
+export const LOCATION_NOT_FOUND = 'location_not_found';
+
+// Errors where trying again with the same location will not help
+const NON_RETRYABLE_ERROR_CODES = [LOCATION_NOT_FOUND, 'invalid_location', 'rate_limited'];
+
+const isErrorType = (error: unknown): error is ErrorType => {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'code' in error &&
+    typeof error.code === 'string'
   );
+};
 
-  if (!response.ok) {
-    throw new Error(`Weather request failed with status ${response.status}`);
+export const hasErrorCode = (error: unknown, code: string): boolean => {
+  return isErrorType(error) && error.code === code;
+};
+
+export const isNonRetryableWeatherError = (error: unknown): boolean => {
+  return isErrorType(error) && NON_RETRYABLE_ERROR_CODES.includes(error.code);
+};
+
+// Unwraps the /api/weather body ({ data, error }) so components get the weather data directly.
+// Failures are thrown, not returned, because React Query only sets isError when queryFn throws.
+export const fetchWeather = async (location: string): Promise<IVCWeatherResponse> => {
+  const response = await snaxios.get<DataErrorReturnObject<IVCWeatherResponse>>(WEATHER_ENDPOINT, {
+    params: { location }
+  });
+
+  if (response.error) {
+    throw response.error;
   }
 
-  return await response.json();
+  const body = response.data;
+
+  if (!body || body.error || !body.data) {
+    throw body?.error ?? errors.unknownError;
+  }
+
+  // Some responses come back with HTTP 200 but no weather, for example an unknown location in offline mode.  Treat them as not found.
+  if (body.data.error) {
+    throw {
+      ...errors.unknownError,
+      code: LOCATION_NOT_FOUND,
+      message: 'Location not found',
+      details: body.data.error
+    };
+  }
+
+  return body.data;
 };
