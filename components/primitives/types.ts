@@ -1,11 +1,12 @@
-import type { Pressable, Text, View, ViewStyle } from "react-native";
+import type { Pressable, PressableInstance, Text, TextInstance, View, ViewInstance, ViewStyle } from "react-native";
 
 type ComponentPropsWithAsChild<T extends React.ElementType<any>> =
   React.ComponentPropsWithoutRef<T> & { asChild?: boolean };
 
-type ViewRef = React.ElementRef<typeof View>;
-type PressableRef = React.ElementRef<typeof Pressable>;
-type TextRef = React.ElementRef<typeof Text>;
+// RN 0.88 types refs as instance types; React.ElementRef<typeof View> no longer resolves to one.
+type ViewRef = ViewInstance;
+type PressableRef = PressableInstance;
+type TextRef = TextInstance;
 
 type SlottableViewProps = ComponentPropsWithAsChild<typeof View>;
 type SlottablePressableProps = ComponentPropsWithAsChild<typeof Pressable> & {

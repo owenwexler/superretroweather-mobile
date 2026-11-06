@@ -1,21 +1,22 @@
 import * as React from "react";
 import {
-  type Image as RNImage,
+  type ImageInstance,
   type ImageProps as RNImageProps,
   type ImageStyle as RNImageStyle,
-  type Pressable as RNPressable,
+  type PressableInstance,
   type PressableProps as RNPressableProps,
   type PressableStateCallbackType,
   type StyleProp,
+  type ViewStyle,
   StyleSheet,
-  type Text as RNText,
+  type TextInstance,
   type TextProps as RNTextProps,
-  type View as RNView,
+  type ViewInstance,
   type ViewProps as RNViewProps,
 } from "react-native";
 
 const Pressable = React.forwardRef<
-  React.ElementRef<typeof RNPressable>,
+  PressableInstance,
   RNPressableProps
 >((props, forwardedRef) => {
   const {children, ...pressableSlotProps} = props;
@@ -25,11 +26,8 @@ const Pressable = React.forwardRef<
     return null;
   }
 
-  return React.cloneElement<
-    React.ComponentPropsWithoutRef<typeof RNPressable>,
-    React.ElementRef<typeof RNPressable>
-  >(isTextChildren(children) ? <></> : children, {
-    ...mergeProps(pressableSlotProps, children.props),
+  return React.cloneElement((isTextChildren(children) ? <></> : children) as React.ReactElement<any>, {
+    ...mergeProps(pressableSlotProps, (children as React.ReactElement<any>).props),
     ref: forwardedRef
       ? composeRefs(forwardedRef, (children as any).ref)
       : (children as any).ref,
@@ -38,7 +36,7 @@ const Pressable = React.forwardRef<
 
 Pressable.displayName = "SlotPressable";
 
-const View = React.forwardRef<React.ElementRef<typeof RNView>, RNViewProps>(
+const View = React.forwardRef<ViewInstance, RNViewProps>(
   (props, forwardedRef) => {
     const {children, ...viewSlotProps} = props;
 
@@ -47,11 +45,8 @@ const View = React.forwardRef<React.ElementRef<typeof RNView>, RNViewProps>(
       return null;
     }
 
-    return React.cloneElement<
-      React.ComponentPropsWithoutRef<typeof RNView>,
-      React.ElementRef<typeof RNView>
-    >(isTextChildren(children) ? <></> : children, {
-      ...mergeProps(viewSlotProps, children.props),
+    return React.cloneElement((isTextChildren(children) ? <></> : children) as React.ReactElement<any>, {
+      ...mergeProps(viewSlotProps, (children as React.ReactElement<any>).props),
       ref: forwardedRef
         ? composeRefs(forwardedRef, (children as any).ref)
         : (children as any).ref,
@@ -61,7 +56,7 @@ const View = React.forwardRef<React.ElementRef<typeof RNView>, RNViewProps>(
 
 View.displayName = "SlotView";
 
-const Text = React.forwardRef<React.ElementRef<typeof RNText>, RNTextProps>(
+const Text = React.forwardRef<TextInstance, RNTextProps>(
   (props, forwardedRef) => {
     const {children, ...textSlotProps} = props;
 
@@ -70,11 +65,8 @@ const Text = React.forwardRef<React.ElementRef<typeof RNText>, RNTextProps>(
       return null;
     }
 
-    return React.cloneElement<
-      React.ComponentPropsWithoutRef<typeof RNText>,
-      React.ElementRef<typeof RNText>
-    >(isTextChildren(children) ? <></> : children, {
-      ...mergeProps(textSlotProps, children.props),
+    return React.cloneElement((isTextChildren(children) ? <></> : children) as React.ReactElement<any>, {
+      ...mergeProps(textSlotProps, (children as React.ReactElement<any>).props),
       ref: forwardedRef
         ? composeRefs(forwardedRef, (children as any).ref)
         : (children as any).ref,
@@ -89,7 +81,7 @@ type ImageSlotProps = RNImageProps & {
 };
 
 const Image = React.forwardRef<
-  React.ElementRef<typeof RNImage>,
+  ImageInstance,
   ImageSlotProps
 >((props, forwardedRef) => {
   const {children, ...imageSlotProps} = props;
@@ -99,11 +91,8 @@ const Image = React.forwardRef<
     return null;
   }
 
-  return React.cloneElement<
-    React.ComponentPropsWithoutRef<typeof RNImage>,
-    React.ElementRef<typeof RNImage>
-  >(isTextChildren(children) ? <></> : children, {
-    ...mergeProps(imageSlotProps, children.props),
+  return React.cloneElement((isTextChildren(children) ? <></> : children) as React.ReactElement<any>, {
+    ...mergeProps(imageSlotProps, (children as React.ReactElement<any>).props),
     ref: forwardedRef
       ? composeRefs(forwardedRef, (children as any).ref)
       : (children as any).ref,
@@ -179,7 +168,7 @@ function combineStyles(slotStyle?: Style, childValue?: Style) {
   if (typeof slotStyle === "function") {
     return (state: PressableStateCallbackType) => {
       return childValue
-        ? StyleSheet.flatten([slotStyle(state), childValue])
+        ? StyleSheet.flatten([slotStyle(state), childValue as StyleProp<ViewStyle>])
         : slotStyle(state);
     };
   }

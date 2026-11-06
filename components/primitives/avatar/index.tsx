@@ -1,9 +1,9 @@
 import * as React from "react";
 import {
   Image as RNImage,
-  type ImageErrorEventData,
-  type ImageLoadEventData,
-  type NativeSyntheticEvent,
+  type ImageErrorEvent,
+  type ImageInstance,
+  type ImageLoadEvent,
   View,
 } from "react-native";
 import * as Slot from "@/components/primitives/slot";
@@ -48,7 +48,7 @@ function useRootContext() {
 }
 
 const Image = React.forwardRef<
-  React.ElementRef<typeof RNImage>,
+  ImageInstance,
   Omit<ComponentPropsWithAsChild<typeof RNImage>, "alt"> & AvatarImageProps
 >(
   (
@@ -64,7 +64,7 @@ const Image = React.forwardRef<
     const {alt, setStatus, status} = useRootContext();
 
     const onLoad = React.useCallback(
-      (e: NativeSyntheticEvent<ImageLoadEventData>) => {
+      (e: ImageLoadEvent) => {
         setStatus("loaded");
         onLoadingStatusChange?.("loaded");
         onLoadProps?.(e);
@@ -73,7 +73,7 @@ const Image = React.forwardRef<
     );
 
     const onError = React.useCallback(
-      (e: NativeSyntheticEvent<ImageErrorEventData>) => {
+      (e: ImageErrorEvent) => {
         setStatus("error");
         onLoadingStatusChange?.("error");
         onErrorProps?.(e);

@@ -31,8 +31,9 @@ export {
   ErrorBoundary,
 } from "expo-router";
 
+// SDK 58 removed Stack's initialRouteName; the anchor route is set here instead.
 export const unstable_settings = {
-  initialRouteName: "index",
+  anchor: "index",
 };
 
 // Prevent the splash screen from auto-hiding before getting the color scheme.

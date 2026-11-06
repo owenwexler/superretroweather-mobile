@@ -6,6 +6,7 @@ import {
   type LayoutRectangle,
   Pressable,
   Text,
+  type ViewInstance,
   View,
 } from "react-native";
 import {
@@ -89,17 +90,12 @@ function useRootContext() {
 
 const Trigger = React.forwardRef<PressableRef, SlottablePressableProps>(
   ({asChild, onPress: onPressProp, disabled = false, ...props}, ref) => {
-    const triggerRef = React.useRef<View>(null);
+    const triggerRef = React.useRef<ViewInstance>(null);
     const {open, onOpenChange, setTriggerPosition} = useRootContext();
 
     React.useImperativeHandle(
       ref,
-      () => {
-        if (!triggerRef.current) {
-          return new View({});
-        }
-        return triggerRef.current;
-      },
+      () => triggerRef.current as ViewInstance,
       [triggerRef.current],
     );
 

@@ -36,15 +36,17 @@ const ToggleGroupUtils = {
   },
 };
 
-const EmptyGestureResponderEvent: GestureResponderEvent = {
+// Partial mock for web press handlers. RN 0.88 types also require legacy fields
+// (dispatchConfig, touchHistory) that are never read here, so the object is asserted.
+const EmptyGestureResponderEvent = {
   nativeEvent: {
     changedTouches: [],
-    identifier: "0",
+    identifier: 0,
     locationX: 0,
     locationY: 0,
     pageX: 0,
     pageY: 0,
-    target: "0",
+    target: 0,
     timestamp: 0,
     touches: [],
   },
@@ -62,6 +64,6 @@ const EmptyGestureResponderEvent: GestureResponderEvent = {
   target: {} as any,
   timeStamp: 0,
   type: "",
-};
+} as unknown as GestureResponderEvent;
 
 export { ToggleGroupUtils, EmptyGestureResponderEvent };
